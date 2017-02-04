@@ -13,12 +13,18 @@ __code uint16_t __at (_CONFIG1) __configword = _INTRC_OSC_NOCLKOUT & _WDT_OFF & 
 #error No config present for this chip
 #endif
 
-#define FUEL_PORT PORTBbits.RB1
-#define FUEL_TRIS TRISBbits.TRISB1
+#define LATCH_PORT PORTBbits.RB1
+#define LATCH_TRIS TRISBbits.TRISB1
+
 #define IGNITION_PORT PORTBbits.RB3
 #define IGNITION_TRIS TRISBbits.TRISB3
-#define LATCH_PORT PORTAbits.RA0
-#define LATCH_TRIS TRISAbits.TRISA0
+
+#define FUEL_PORT PORTAbits.RA3
+#define FUEL_TRIS TRISAbits.TRISA3
+
+#define DEBUG_PORT PORTAbits.RA2
+#define DEBUG_TRIS TRISAbits.TRISA2
+
 
 #define STOP_PORT PORTBbits.RB0
 #define STOP_TRIS TRISBbits.TRISB0
@@ -30,10 +36,12 @@ void configure(void)
     FUEL_PORT = 0;
     IGNITION_PORT = 0;
     LATCH_PORT = 0;
+    DEBUG_PORT = 0;
     
     FUEL_TRIS = 0;
     IGNITION_TRIS = 0;
     LATCH_TRIS = 0;
+
     FLAME_TRIS = 1;
     STOP_TRIS= 1;
 }
@@ -54,17 +62,23 @@ void ignition_on() { IGNITION_PORT = 1; }
 void ignition_off() { IGNITION_PORT = 0; }
 void latch_on() { LATCH_PORT = 1; }
 void latch_off() { LATCH_PORT = 0; }
-bool read_stopbutton() { return STOP_PORT? true:false; }
-bool read_flame() { return FLAME_PORT; }
+bool read_inv_stopbutton() { return !STOP_PORT; }
+bool read_flame() { return !FLAME_PORT; }
 
 void delay_ms(uint8_t milliseconds)
 {
-    delay(1); // FIXME stub
+    //delay(0xff); // FIXME stub
+    uint8_t i;
+    for (i=0; i < milliseconds; i++) 
+    {
+        delay(13); 
+    }
+
 }
-void delay_hs(uint8_t hectoseconds)
+void delay_ds(uint8_t deciseconds)
 {
     uint8_t i;
-    for (i=0; i < hectoseconds; i++) 
+    for (i=0; i < deciseconds; i++) 
     {
 	delay_ms(100);
     }
@@ -75,62 +89,98 @@ void delay_s(uint8_t seconds)
     uint8_t i;
     for (i=0; i < seconds; i++) 
     {
-	delay_hs(1);
+	delay_ds(10);
     }
 }
 
 void delay_relay(void)
 {
     // avoid sudden current changes on the relay supply net
-    delay_hs(50);
+    delay_ds(3);
 }
 void delay_pressure(void)
 {
     delay_s(3);
 }
+void delay_spark(void)
+{
+    delay_s(2);
+}
+
 void delay_cooldown(void)
 {
-    delay_s(2*60);
+    delay_s(120); // measured 120+14sec on chrono
+}
+void update_debug(void)
+{
+    return;
+    if (read_flame()) {
+        DEBUG_PORT = 1;
+    } else {
+        DEBUG_PORT = 0;
+    }
 }
 void main(void)
 {
     configure();
-    delay_pressure();
-    fuel_on();
-    delay_relay();
-    ignition_on();
 
-    do {
-        if(read_flame()) {
+    delay_pressure();
+
+    ignition_on();
+    delay_relay();
+
+    delay_spark();
+
+    fuel_on();
+
+    do 
+    {
+        if(read_flame()) 
+        {
             delay_ms(200);
             if(read_flame()) {
                 break;
             }
         }
+        update_debug();
     } while (true);
 
     ignition_off();
     delay_relay();
     latch_on();
-    do {
-        if(!read_flame()) {
-            delay_ms(200);
-            if(!read_flame()) {
+
+    do 
+    {
+        update_debug();
+            DEBUG_PORT = 0;
+        if(!read_flame()) 
+        {
+            delay_ds(5);
+            if(!read_flame()) 
+            {
                 fuel_off();
                 delay_relay();
                 latch_off();
                 ignition_off(); // failsafe
-                while(1) { };
+                while(1) { update_debug(); } ; 
             }
         }
-        if (read_stopbutton()) {
-            delay_ms(200);
-            if (read_stopbutton()) {
+        if (!read_inv_stopbutton()) 
+        {
+            DEBUG_PORT = 1;
+            //uint8_t i;
+            //for i=0; i < 200; i++
+            //delay_ms(1);
+            //if during 2ds no pulse received
+
+            if (!read_inv_stopbutton()) 
+            {
+                DEBUG_PORT = 1;
                 fuel_off();
                 delay_cooldown();
                 latch_off();
                 ignition_off(); // failsafe
-                while(1) { };
+                while(1) { update_debug(); };
             }
         }
     } while(true);
