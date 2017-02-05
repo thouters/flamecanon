@@ -13,6 +13,8 @@ __code uint16_t __at (_CONFIG1) __configword = _INTRC_OSC_NOCLKOUT & _WDT_OFF & 
 #error No config present for this chip
 #endif
 
+/* The start button powers the circuit until a flame is detected, at that point
+ * the latch relay takes over */
 #define LATCH_PORT PORTBbits.RB1
 #define LATCH_TRIS TRISBbits.TRISB1
 
@@ -22,31 +24,35 @@ __code uint16_t __at (_CONFIG1) __configword = _INTRC_OSC_NOCLKOUT & _WDT_OFF & 
 #define FUEL_PORT PORTAbits.RA3
 #define FUEL_TRIS TRISAbits.TRISA3
 
+/* debug artifact, got into prelim. release */
 #define DEBUG_PORT PORTAbits.RA2
 #define DEBUG_TRIS TRISAbits.TRISA2
 
 
 #define STOP_PORT PORTBbits.RB0
 #define STOP_TRIS TRISBbits.TRISB0
-#define FLAME_PORT PORTAbits.RA1
-#define FLAME_TRIS TRISAbits.TRISA1
+
+#define NFLAME_PORT PORTAbits.RA1
+#define NFLAME_TRIS TRISAbits.TRISA1
 
 void configure(void)
 {
+    /* outputs inactive */
     FUEL_PORT = 0;
     IGNITION_PORT = 0;
     LATCH_PORT = 0;
     DEBUG_PORT = 0;
     
+    /* configure outputs */
     FUEL_TRIS = 0;
     IGNITION_TRIS = 0;
     LATCH_TRIS = 0;
 
-    FLAME_TRIS = 1;
+    /* configure inputs */
+    NFLAME_TRIS = 1;
     STOP_TRIS= 1;
 }
 
-// Uncalibrated delay, just waits a number of for-loop iterations
 void delay(uint16_t iterations)
 {
 	uint16_t i;
@@ -62,12 +68,23 @@ void ignition_on() { IGNITION_PORT = 1; }
 void ignition_off() { IGNITION_PORT = 0; }
 void latch_on() { LATCH_PORT = 1; }
 void latch_off() { LATCH_PORT = 0; }
-bool read_inv_stopbutton() { return !STOP_PORT; }
-bool read_flame() { return !FLAME_PORT; }
+
+bool read_inv_stopbutton() 
+{ 
+    /* Somehow the micro didn't behave when using non-inverting
+     * read_stopbutton(), for this reason I return the inverted result 
+     * and invert the return value again.
+     * TODO: check assembly, this might be a SDCC bug? */
+    return !STOP_PORT; 
+}
+
+bool read_nflame() 
+{ 
+    return !NFLAME_PORT; 
+}
 
 void delay_ms(uint8_t milliseconds)
 {
-    //delay(0xff); // FIXME stub
     uint8_t i;
     for (i=0; i < milliseconds; i++) 
     {
@@ -109,7 +126,7 @@ void delay_spark(void)
 
 void delay_cooldown(void)
 {
-    delay_s(120); // measured 120+14sec on chrono
+    delay_s(120); // measured 120+14sec on chrono, 11% error, I can live with that.
 }
 void main(void)
 {
@@ -127,10 +144,10 @@ void main(void)
 
     do 
     {
-        if(read_flame()) 
+        if(read_nflame()) 
         {
             delay_ms(200);
-            if(read_flame()) {
+            if(read_nflame()) {
                 break;
             }
         }
@@ -142,11 +159,11 @@ void main(void)
 
     do 
     {
-            DEBUG_PORT = 0;
-        if(!read_flame()) 
+        DEBUG_PORT = 0;
+        if(!read_nflame()) 
         {
             delay_ds(5);
-            if(!read_flame()) 
+            if(!read_nflame()) 
             {
                 fuel_off();
                 delay_relay();
