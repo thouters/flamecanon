@@ -1,0 +1,822 @@
+gplink-1.4.0 #1107 (May 18 2015)
+Copyright (c) 1998-2014 gputils project
+Listing File Generated: 2-4-2017  15:31:57
+ 
+ 
+Address  Value    Disassembly              Source
+-------  -----    -----------              ------
+                                           ;--------------------------------------------------------
+                                           ; File Created by SDCC : free open source ANSI-C Compiler
+                                           ; Version 3.6.0 #9615 (Linux)
+                                           ;--------------------------------------------------------
+                                           ; PIC port for the 14-bit core
+                                           ;--------------------------------------------------------
+                                           ;	.file	"flamecanon.c"
+                                           	list	p=16f84
+                                           	radix dec
+                                           	include "p16f84.inc"
+                                                   LIST
+                                           
+                                           ;==========================================================================
+                                           ; Build date : Aug 07 2014
+                                           ;  MPASM PIC16F84 processor include
+                                           ; 
+                                           ;  (c) Copyright 1999-2014 Microchip Technology, All rights reserved
+                                           ;==========================================================================
+                                           
+                                                   NOLIST
+                                           ;--------------------------------------------------------
+                                           ; config word(s)
+                                           ;--------------------------------------------------------
+002007   3ff3     addlw   0xf3             	__config 0x3ff3
+                                           ;--------------------------------------------------------
+                                           ; external declarations
+                                           ;--------------------------------------------------------
+                                           	extern	_STATUSbits
+                                           	extern	_PORTAbits
+                                           	extern	_PORTBbits
+                                           	extern	_INTCONbits
+                                           	extern	_OPTION_REGbits
+                                           	extern	_TRISAbits
+                                           	extern	_TRISBbits
+                                           	extern	_EECON1bits
+                                           	extern	_INDF
+                                           	extern	_TMR0
+                                           	extern	_PCL
+                                           	extern	_STATUS
+                                           	extern	_FSR
+                                           	extern	_PORTA
+                                           	extern	_PORTB
+                                           	extern	_EEDATA
+                                           	extern	_EEADR
+                                           	extern	_PCLATH
+                                           	extern	_INTCON
+                                           	extern	_OPTION_REG
+                                           	extern	_TRISA
+                                           	extern	_TRISB
+                                           	extern	_EECON1
+                                           	extern	_EECON2
+                                           	extern	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; global declarations
+                                           ;--------------------------------------------------------
+                                           	global	_configure
+                                           	global	_delay
+                                           	global	_fuel_on
+                                           	global	_fuel_off
+                                           	global	_ignition_on
+                                           	global	_ignition_off
+                                           	global	_latch_on
+                                           	global	_latch_off
+                                           	global	_read_inv_stopbutton
+                                           	global	_read_flame
+                                           	global	_delay_ms
+                                           	global	_delay_ds
+                                           	global	_delay_s
+                                           	global	_delay_relay
+                                           	global	_delay_pressure
+                                           	global	_delay_spark
+                                           	global	_delay_cooldown
+                                           	global	_main
+                                           
+                                           	global PSAVE
+                                           	global SSAVE
+                                           	global WSAVE
+                                           	global STK12
+                                           	global STK11
+                                           	global STK10
+                                           	global STK09
+                                           	global STK08
+                                           	global STK07
+                                           	global STK06
+                                           	global STK05
+                                           	global STK04
+                                           	global STK03
+                                           	global STK02
+                                           	global STK01
+                                           	global STK00
+                                           
+                                           sharebank udata_ovr 0x000C
+                                           PSAVE	res 1
+                                           SSAVE	res 1
+                                           WSAVE	res 1
+                                           STK12	res 1
+                                           STK11	res 1
+                                           STK10	res 1
+                                           STK09	res 1
+                                           STK08	res 1
+                                           STK07	res 1
+                                           STK06	res 1
+                                           STK05	res 1
+                                           STK04	res 1
+                                           STK03	res 1
+                                           STK02	res 1
+                                           STK01	res 1
+                                           STK00	res 1
+                                           
+                                           ;--------------------------------------------------------
+                                           ; global definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; absolute symbol definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; compiler-defined variables
+                                           ;--------------------------------------------------------
+                                           UDL_flamecanon_0	udata
+                                           r0x1001	res	1
+                                           r0x1000	res	1
+                                           r0x1002	res	1
+                                           r0x1003	res	1
+                                           r0x1004	res	1
+                                           r0x1005	res	1
+                                           r0x1006	res	1
+                                           r0x1007	res	1
+                                           r0x1008	res	1
+                                           r0x1009	res	1
+                                           r0x100A	res	1
+                                           r0x100B	res	1
+                                           ;--------------------------------------------------------
+                                           ; initialized data
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; overlayable items in internal ram 
+                                           ;--------------------------------------------------------
+                                           ;	udata_ovr
+                                           ;--------------------------------------------------------
+                                           ; reset vector 
+                                           ;--------------------------------------------------------
+                                           STARTUP	code 0x0000
+000000   0000     nop                      	nop
+                                           	pagesel __sdcc_gsinit_startup
+000001   2802     goto    0x0002           	goto	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; code
+                                           ;--------------------------------------------------------
+                                           code_flamecanon	code
+                                           ;***
+                                           ;  pBlock Stats: dbName = M
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _configure
+                                           ;   _delay_pressure
+                                           ;   _ignition_on
+                                           ;   _delay_relay
+                                           ;   _delay_spark
+                                           ;   _fuel_on
+                                           ;   _read_flame
+                                           ;   _delay_ms
+                                           ;   _read_flame
+                                           ;   _ignition_off
+                                           ;   _delay_relay
+                                           ;   _latch_on
+                                           ;   _read_flame
+                                           ;   _delay_ds
+                                           ;   _read_flame
+                                           ;   _fuel_off
+                                           ;   _delay_relay
+                                           ;   _delay_cooldown
+                                           ;   _latch_off
+                                           ;   _ignition_off
+                                           ;   _read_inv_stopbutton
+                                           ;   _delay_ds
+                                           ;   _read_inv_stopbutton
+                                           ;   _delay_ms
+                                           ;   _fuel_off
+                                           ;   _delay_cooldown
+                                           ;   _latch_off
+                                           ;   _ignition_off
+                                           ;   _configure
+                                           ;   _delay_pressure
+                                           ;   _ignition_on
+                                           ;   _delay_relay
+                                           ;   _delay_spark
+                                           ;   _fuel_on
+                                           ;   _read_flame
+                                           ;   _delay_ms
+                                           ;   _read_flame
+                                           ;   _ignition_off
+                                           ;   _delay_relay
+                                           ;   _latch_on
+                                           ;   _read_flame
+                                           ;   _delay_ds
+                                           ;   _read_flame
+                                           ;   _fuel_off
+                                           ;   _delay_relay
+                                           ;   _delay_cooldown
+                                           ;   _latch_off
+                                           ;   _ignition_off
+                                           ;   _read_inv_stopbutton
+                                           ;   _delay_ds
+                                           ;   _read_inv_stopbutton
+                                           ;   _delay_ms
+                                           ;   _fuel_off
+                                           ;   _delay_cooldown
+                                           ;   _latch_off
+                                           ;   _ignition_off
+                                           ;2 compiler assigned registers:
+                                           ;   r0x100A
+                                           ;   r0x100B
+                                           ;; Starting pCode block
+                                           S_flamecanon__main	code
+                                           _main:
+                                           ; 2 exit points
+                                           ;	.line	117; "flamecanon.c"	configure();
+                                           	PAGESEL	_configure
+00009e   213d     call    0x013d           	CALL	_configure
+                                           	PAGESEL	$
+                                           ;	.line	119; "flamecanon.c"	delay_pressure();
+                                           	PAGESEL	_delay_pressure
+00009f   217f     call    0x017f           	CALL	_delay_pressure
+                                           	PAGESEL	$
+                                           ;	.line	121; "flamecanon.c"	ignition_on();
+                                           	PAGESEL	_ignition_on
+0000a0   218e     call    0x018e           	CALL	_ignition_on
+                                           	PAGESEL	$
+                                           ;	.line	122; "flamecanon.c"	delay_relay();
+                                           	PAGESEL	_delay_relay
+0000a1   2182     call    0x0182           	CALL	_delay_relay
+                                           	PAGESEL	$
+                                           ;	.line	124; "flamecanon.c"	delay_spark();
+                                           	PAGESEL	_delay_spark
+0000a2   217c     call    0x017c           	CALL	_delay_spark
+                                           	PAGESEL	$
+                                           ;	.line	126; "flamecanon.c"	fuel_on();
+                                           	PAGESEL	_fuel_on
+0000a3   2194     call    0x0194           	CALL	_fuel_on
+                                           	PAGESEL	$
+                                           _00206_DS_:
+                                           ;	.line	130; "flamecanon.c"	if(read_flame()) 
+                                           	PAGESEL	_read_flame
+0000a4   215f     call    0x015f           	CALL	_read_flame
+                                           	PAGESEL	$
+0000a5   00a6     movwf   0x26             	MOVWF	r0x100A
+0000a6   0826     movf    0x26, 0x0        	MOVF	r0x100A,W
+0000a7   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+0000a8   28a4     goto    0x00a4           	GOTO	_00206_DS_
+                                           ;	.line	132; "flamecanon.c"	delay_ms(200);
+0000a9   30c8     movlw   0xc8             	MOVLW	0xc8
+                                           	PAGESEL	_delay_ms
+0000aa   2130     call    0x0130           	CALL	_delay_ms
+                                           	PAGESEL	$
+                                           ;	.line	133; "flamecanon.c"	if(read_flame()) {
+                                           	PAGESEL	_read_flame
+0000ab   215f     call    0x015f           	CALL	_read_flame
+                                           	PAGESEL	$
+0000ac   00a6     movwf   0x26             	MOVWF	r0x100A
+0000ad   0826     movf    0x26, 0x0        	MOVF	r0x100A,W
+0000ae   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+0000af   28a4     goto    0x00a4           	GOTO	_00206_DS_
+                                           ;	.line	139; "flamecanon.c"	ignition_off();
+                                           	PAGESEL	_ignition_off
+0000b0   218b     call    0x018b           	CALL	_ignition_off
+                                           	PAGESEL	$
+                                           ;	.line	140; "flamecanon.c"	delay_relay();
+                                           	PAGESEL	_delay_relay
+0000b1   2182     call    0x0182           	CALL	_delay_relay
+                                           	PAGESEL	$
+                                           ;	.line	141; "flamecanon.c"	latch_on();
+                                           	PAGESEL	_latch_on
+0000b2   2188     call    0x0188           	CALL	_latch_on
+                                           	PAGESEL	$
+                                           _00226_DS_:
+                                           ;	.line	145; "flamecanon.c"	DEBUG_PORT = 0;
+0000b3   1283     bcf     0x03, 0x5        	BANKSEL	_PORTAbits
+0000b4   1105     bcf     0x05, 0x2        	BCF	_PORTAbits,2
+                                           ;	.line	146; "flamecanon.c"	if(!read_flame()) 
+                                           	PAGESEL	_read_flame
+0000b5   215f     call    0x015f           	CALL	_read_flame
+                                           	PAGESEL	$
+0000b6   00a6     movwf   0x26             	MOVWF	r0x100A
+0000b7   0826     movf    0x26, 0x0        	MOVF	r0x100A,W
+0000b8   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000b9   28c7     goto    0x00c7           	GOTO	_00215_DS_
+                                           ;	.line	148; "flamecanon.c"	delay_ds(5);
+0000ba   3005     movlw   0x05             	MOVLW	0x05
+                                           	PAGESEL	_delay_ds
+0000bb   2154     call    0x0154           	CALL	_delay_ds
+                                           	PAGESEL	$
+                                           ;	.line	149; "flamecanon.c"	if(!read_flame()) 
+                                           	PAGESEL	_read_flame
+0000bc   215f     call    0x015f           	CALL	_read_flame
+                                           	PAGESEL	$
+0000bd   00a6     movwf   0x26             	MOVWF	r0x100A
+0000be   0826     movf    0x26, 0x0        	MOVF	r0x100A,W
+0000bf   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000c0   28c7     goto    0x00c7           	GOTO	_00215_DS_
+                                           ;	.line	151; "flamecanon.c"	fuel_off();
+                                           	PAGESEL	_fuel_off
+0000c1   2191     call    0x0191           	CALL	_fuel_off
+                                           	PAGESEL	$
+                                           ;	.line	152; "flamecanon.c"	delay_relay();
+                                           	PAGESEL	_delay_relay
+0000c2   2182     call    0x0182           	CALL	_delay_relay
+                                           	PAGESEL	$
+                                           ;	.line	154; "flamecanon.c"	delay_cooldown();
+                                           	PAGESEL	_delay_cooldown
+0000c3   2179     call    0x0179           	CALL	_delay_cooldown
+                                           	PAGESEL	$
+                                           ;	.line	155; "flamecanon.c"	latch_off();
+                                           	PAGESEL	_latch_off
+0000c4   2185     call    0x0185           	CALL	_latch_off
+                                           	PAGESEL	$
+                                           ;	.line	156; "flamecanon.c"	ignition_off(); // failsafe
+                                           	PAGESEL	_ignition_off
+0000c5   218b     call    0x018b           	CALL	_ignition_off
+                                           	PAGESEL	$
+                                           _00210_DS_:
+                                           ;	.line	157; "flamecanon.c"	while(1) { } ; 
+0000c6   28c6     goto    0x00c6           	GOTO	_00210_DS_
+                                           _00215_DS_:
+                                           ;	.line	160; "flamecanon.c"	if (!read_inv_stopbutton()) 
+                                           	PAGESEL	_read_inv_stopbutton
+0000c7   2168     call    0x0168           	CALL	_read_inv_stopbutton
+                                           	PAGESEL	$
+0000c8   00a6     movwf   0x26             	MOVWF	r0x100A
+0000c9   0826     movf    0x26, 0x0        	MOVF	r0x100A,W
+0000ca   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000cb   28b3     goto    0x00b3           	GOTO	_00226_DS_
+                                           ;	.line	162; "flamecanon.c"	DEBUG_PORT = 1;
+0000cc   1283     bcf     0x03, 0x5        	BANKSEL	_PORTAbits
+0000cd   1505     bsf     0x05, 0x2        	BSF	_PORTAbits,2
+                                           ;	.line	163; "flamecanon.c"	delay_ds(5);
+0000ce   3005     movlw   0x05             	MOVLW	0x05
+                                           	PAGESEL	_delay_ds
+0000cf   2154     call    0x0154           	CALL	_delay_ds
+                                           	PAGESEL	$
+                                           ;	.line	168; "flamecanon.c"	for (i=0; i < 200; i++) 
+0000d0   01a6     clrf    0x26             	CLRF	r0x100A
+                                           _00229_DS_:
+                                           ;	.line	170; "flamecanon.c"	if (!read_inv_stopbutton()) {
+                                           	PAGESEL	_read_inv_stopbutton
+0000d1   2168     call    0x0168           	CALL	_read_inv_stopbutton
+                                           	PAGESEL	$
+0000d2   00a7     movwf   0x27             	MOVWF	r0x100B
+0000d3   0827     movf    0x27, 0x0        	MOVF	r0x100B,W
+0000d4   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+0000d5   28dd     goto    0x00dd           	GOTO	_00218_DS_
+                                           ;	.line	174; "flamecanon.c"	delay_ms(1);
+0000d6   3001     movlw   0x01             	MOVLW	0x01
+                                           	PAGESEL	_delay_ms
+0000d7   2130     call    0x0130           	CALL	_delay_ms
+                                           	PAGESEL	$
+                                           ;	.line	168; "flamecanon.c"	for (i=0; i < 200; i++) 
+0000d8   0aa6     incf    0x26, 0x1        	INCF	r0x100A,F
+                                           ;;unsigned compare: left < lit(0xC8=200), size=1
+0000d9   30c8     movlw   0xc8             	MOVLW	0xc8
+0000da   0226     subwf   0x26, 0x0        	SUBWF	r0x100A,W
+0000db   1c03     btfss   0x03, 0x0        	BTFSS	STATUS,0
+0000dc   28d1     goto    0x00d1           	GOTO	_00229_DS_
+                                           ;;genSkipc:3257: created from rifx:0x7ffe58cc6690
+                                           ;;unsigned compare: left < lit(0xC8=200), size=1
+                                           _00218_DS_:
+                                           ;	.line	176; "flamecanon.c"	if (i < 200) // end of loop not reached
+0000dd   30c8     movlw   0xc8             	MOVLW	0xc8
+0000de   0226     subwf   0x26, 0x0        	SUBWF	r0x100A,W
+0000df   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+0000e0   28b3     goto    0x00b3           	GOTO	_00226_DS_
+                                           ;;genSkipc:3257: created from rifx:0x7ffe58cc6690
+                                           ;	.line	178; "flamecanon.c"	DEBUG_PORT = 1;
+0000e1   1283     bcf     0x03, 0x5        	BANKSEL	_PORTAbits
+0000e2   1505     bsf     0x05, 0x2        	BSF	_PORTAbits,2
+                                           ;	.line	179; "flamecanon.c"	fuel_off();
+                                           	PAGESEL	_fuel_off
+0000e3   2191     call    0x0191           	CALL	_fuel_off
+                                           	PAGESEL	$
+                                           ;	.line	180; "flamecanon.c"	delay_cooldown();
+                                           	PAGESEL	_delay_cooldown
+0000e4   2179     call    0x0179           	CALL	_delay_cooldown
+                                           	PAGESEL	$
+                                           ;	.line	181; "flamecanon.c"	latch_off();
+                                           	PAGESEL	_latch_off
+0000e5   2185     call    0x0185           	CALL	_latch_off
+                                           	PAGESEL	$
+                                           ;	.line	182; "flamecanon.c"	ignition_off(); // failsafe
+                                           	PAGESEL	_ignition_off
+0000e6   218b     call    0x018b           	CALL	_ignition_off
+                                           	PAGESEL	$
+                                           _00220_DS_:
+                                           ;	.line	183; "flamecanon.c"	while(1) {  };
+0000e7   28e7     goto    0x00e7           	GOTO	_00220_DS_
+                                           ;	.line	186; "flamecanon.c"	} while(true);
+0000e8   0008     return                   	RETURN	
+                                           ; exit point of _main
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay_s
+                                           ;   _delay_s
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay_cooldown	code
+                                           _delay_cooldown:
+                                           ; 2 exit points
+                                           ;	.line	112; "flamecanon.c"	delay_s(120); // measured 120+14sec on chrono
+000179   3078     movlw   0x78             	MOVLW	0x78
+                                           	PAGESEL	_delay_s
+00017a   2149     call    0x0149           	CALL	_delay_s
+                                           	PAGESEL	$
+00017b   0008     return                   	RETURN	
+                                           ; exit point of _delay_cooldown
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay_s
+                                           ;   _delay_s
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay_spark	code
+                                           _delay_spark:
+                                           ; 2 exit points
+                                           ;	.line	107; "flamecanon.c"	delay_s(2);
+00017c   3002     movlw   0x02             	MOVLW	0x02
+                                           	PAGESEL	_delay_s
+00017d   2149     call    0x0149           	CALL	_delay_s
+                                           	PAGESEL	$
+00017e   0008     return                   	RETURN	
+                                           ; exit point of _delay_spark
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay_s
+                                           ;   _delay_s
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay_pressure	code
+                                           _delay_pressure:
+                                           ; 2 exit points
+                                           ;	.line	103; "flamecanon.c"	delay_s(3);
+00017f   3003     movlw   0x03             	MOVLW	0x03
+                                           	PAGESEL	_delay_s
+000180   2149     call    0x0149           	CALL	_delay_s
+                                           	PAGESEL	$
+000181   0008     return                   	RETURN	
+                                           ; exit point of _delay_pressure
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay_ds
+                                           ;   _delay_ds
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay_relay	code
+                                           _delay_relay:
+                                           ; 2 exit points
+                                           ;	.line	99; "flamecanon.c"	delay_ds(3);
+000182   3003     movlw   0x03             	MOVLW	0x03
+                                           	PAGESEL	_delay_ds
+000183   2154     call    0x0154           	CALL	_delay_ds
+                                           	PAGESEL	$
+000184   0008     return                   	RETURN	
+                                           ; exit point of _delay_relay
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay_ds
+                                           ;   _delay_ds
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1008
+                                           ;   r0x1009
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay_s	code
+                                           _delay_s:
+                                           ; 2 exit points
+                                           ;	.line	87; "flamecanon.c"	void delay_s(uint8_t seconds)
+000149   00a4     movwf   0x24             	MOVWF	r0x1008
+                                           ;	.line	90; "flamecanon.c"	for (i=0; i < seconds; i++) 
+00014a   01a5     clrf    0x25             	CLRF	r0x1009
+                                           _00179_DS_:
+00014b   0824     movf    0x24, 0x0        	MOVF	r0x1008,W
+00014c   0225     subwf   0x25, 0x0        	SUBWF	r0x1009,W
+00014d   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+00014e   2953     goto    0x0153           	GOTO	_00181_DS_
+                                           ;;genSkipc:3257: created from rifx:0x7ffe58cc6690
+                                           ;	.line	92; "flamecanon.c"	delay_ds(10);
+00014f   300a     movlw   0x0a             	MOVLW	0x0a
+                                           	PAGESEL	_delay_ds
+000150   2154     call    0x0154           	CALL	_delay_ds
+                                           	PAGESEL	$
+                                           ;	.line	90; "flamecanon.c"	for (i=0; i < seconds; i++) 
+000151   0aa5     incf    0x25, 0x1        	INCF	r0x1009,F
+000152   294b     goto    0x014b           	GOTO	_00179_DS_
+                                           _00181_DS_:
+000153   0008     return                   	RETURN	
+                                           ; exit point of _delay_s
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay_ms
+                                           ;   _delay_ms
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1006
+                                           ;   r0x1007
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay_ds	code
+                                           _delay_ds:
+                                           ; 2 exit points
+                                           ;	.line	78; "flamecanon.c"	void delay_ds(uint8_t deciseconds)
+000154   00a2     movwf   0x22             	MOVWF	r0x1006
+                                           ;	.line	81; "flamecanon.c"	for (i=0; i < deciseconds; i++) 
+000155   01a3     clrf    0x23             	CLRF	r0x1007
+                                           _00170_DS_:
+000156   0822     movf    0x22, 0x0        	MOVF	r0x1006,W
+000157   0223     subwf   0x23, 0x0        	SUBWF	r0x1007,W
+000158   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000159   295e     goto    0x015e           	GOTO	_00172_DS_
+                                           ;;genSkipc:3257: created from rifx:0x7ffe58cc6690
+                                           ;	.line	83; "flamecanon.c"	delay_ms(100);
+00015a   3064     movlw   0x64             	MOVLW	0x64
+                                           	PAGESEL	_delay_ms
+00015b   2130     call    0x0130           	CALL	_delay_ms
+                                           	PAGESEL	$
+                                           ;	.line	81; "flamecanon.c"	for (i=0; i < deciseconds; i++) 
+00015c   0aa3     incf    0x23, 0x1        	INCF	r0x1007,F
+00015d   2956     goto    0x0156           	GOTO	_00170_DS_
+                                           _00172_DS_:
+00015e   0008     return                   	RETURN	
+                                           ; exit point of _delay_ds
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay
+                                           ;   _delay
+                                           ;3 compiler assigned registers:
+                                           ;   r0x1004
+                                           ;   r0x1005
+                                           ;   STK00
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay_ms	code
+                                           _delay_ms:
+                                           ; 2 exit points
+                                           ;	.line	68; "flamecanon.c"	void delay_ms(uint8_t milliseconds)
+000130   00a0     movwf   0x20             	MOVWF	r0x1004
+                                           ;	.line	72; "flamecanon.c"	for (i=0; i < milliseconds; i++) 
+000131   01a1     clrf    0x21             	CLRF	r0x1005
+                                           _00161_DS_:
+000132   0820     movf    0x20, 0x0        	MOVF	r0x1004,W
+000133   0221     subwf   0x21, 0x0        	SUBWF	r0x1005,W
+000134   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000135   293c     goto    0x013c           	GOTO	_00163_DS_
+                                           ;;genSkipc:3257: created from rifx:0x7ffe58cc6690
+                                           ;	.line	74; "flamecanon.c"	delay(13); 
+000136   300d     movlw   0x0d             	MOVLW	0x0d
+000137   009b     movwf   0x1b             	MOVWF	STK00
+000138   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000139   211d     call    0x011d           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	72; "flamecanon.c"	for (i=0; i < milliseconds; i++) 
+00013a   0aa1     incf    0x21, 0x1        	INCF	r0x1005,F
+00013b   2932     goto    0x0132           	GOTO	_00161_DS_
+                                           _00163_DS_:
+00013c   0008     return                   	RETURN	
+                                           ; exit point of _delay_ms
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1000
+                                           ;   r0x1001
+                                           ;; Starting pCode block
+                                           S_flamecanon__read_flame	code
+                                           _read_flame:
+                                           ; 2 exit points
+                                           ;	.line	66; "flamecanon.c"	bool read_flame() { return !FLAME_PORT; }
+00015f   019d     clrf    0x1d             	CLRF	r0x1000
+000160   1283     bcf     0x03, 0x5        	BANKSEL	_PORTAbits
+000161   1885     btfsc   0x05, 0x1        	BTFSC	_PORTAbits,1
+000162   0a9d     incf    0x1d, 0x1        	INCF	r0x1000,F
+000163   081d     movf    0x1d, 0x0        	MOVF	r0x1000,W
+000164   3000     movlw   0x00             	MOVLW	0x00
+000165   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+000166   3001     movlw   0x01             	MOVLW	0x01
+                                           ;;1	MOVWF	r0x1001
+000167   0008     return                   	RETURN	
+                                           ; exit point of _read_flame
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1000
+                                           ;   r0x1001
+                                           ;; Starting pCode block
+                                           S_flamecanon__read_inv_stopbutton	code
+                                           _read_inv_stopbutton:
+                                           ; 2 exit points
+                                           ;	.line	65; "flamecanon.c"	bool read_inv_stopbutton() { return !STOP_PORT; }
+000168   019d     clrf    0x1d             	CLRF	r0x1000
+000169   1283     bcf     0x03, 0x5        	BANKSEL	_PORTBbits
+00016a   1806     btfsc   0x06, 0x0        	BTFSC	_PORTBbits,0
+00016b   0a9d     incf    0x1d, 0x1        	INCF	r0x1000,F
+00016c   081d     movf    0x1d, 0x0        	MOVF	r0x1000,W
+00016d   3000     movlw   0x00             	MOVLW	0x00
+00016e   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+00016f   3001     movlw   0x01             	MOVLW	0x01
+                                           ;;1	MOVWF	r0x1001
+000170   0008     return                   	RETURN	
+                                           ; exit point of _read_inv_stopbutton
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           S_flamecanon__latch_off	code
+                                           _latch_off:
+                                           ; 2 exit points
+                                           ;	.line	64; "flamecanon.c"	void latch_off() { LATCH_PORT = 0; }
+000185   1283     bcf     0x03, 0x5        	BANKSEL	_PORTBbits
+000186   1086     bcf     0x06, 0x1        	BCF	_PORTBbits,1
+000187   0008     return                   	RETURN	
+                                           ; exit point of _latch_off
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           S_flamecanon__latch_on	code
+                                           _latch_on:
+                                           ; 2 exit points
+                                           ;	.line	63; "flamecanon.c"	void latch_on() { LATCH_PORT = 1; }
+000188   1283     bcf     0x03, 0x5        	BANKSEL	_PORTBbits
+000189   1486     bsf     0x06, 0x1        	BSF	_PORTBbits,1
+00018a   0008     return                   	RETURN	
+                                           ; exit point of _latch_on
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           S_flamecanon__ignition_off	code
+                                           _ignition_off:
+                                           ; 2 exit points
+                                           ;	.line	62; "flamecanon.c"	void ignition_off() { IGNITION_PORT = 0; }
+00018b   1283     bcf     0x03, 0x5        	BANKSEL	_PORTBbits
+00018c   1186     bcf     0x06, 0x3        	BCF	_PORTBbits,3
+00018d   0008     return                   	RETURN	
+                                           ; exit point of _ignition_off
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           S_flamecanon__ignition_on	code
+                                           _ignition_on:
+                                           ; 2 exit points
+                                           ;	.line	61; "flamecanon.c"	void ignition_on() { IGNITION_PORT = 1; }
+00018e   1283     bcf     0x03, 0x5        	BANKSEL	_PORTBbits
+00018f   1586     bsf     0x06, 0x3        	BSF	_PORTBbits,3
+000190   0008     return                   	RETURN	
+                                           ; exit point of _ignition_on
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           S_flamecanon__fuel_off	code
+                                           _fuel_off:
+                                           ; 2 exit points
+                                           ;	.line	60; "flamecanon.c"	void fuel_off(){ FUEL_PORT = 0; }
+000191   1283     bcf     0x03, 0x5        	BANKSEL	_PORTAbits
+000192   1185     bcf     0x05, 0x3        	BCF	_PORTAbits,3
+000193   0008     return                   	RETURN	
+                                           ; exit point of _fuel_off
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           S_flamecanon__fuel_on	code
+                                           _fuel_on:
+                                           ; 2 exit points
+                                           ;	.line	59; "flamecanon.c"	void fuel_on() { FUEL_PORT = 1; }
+000194   1283     bcf     0x03, 0x5        	BANKSEL	_PORTAbits
+000195   1585     bsf     0x05, 0x3        	BSF	_PORTAbits,3
+000196   0008     return                   	RETURN	
+                                           ; exit point of _fuel_on
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;5 compiler assigned registers:
+                                           ;   r0x1000
+                                           ;   STK00
+                                           ;   r0x1001
+                                           ;   r0x1002
+                                           ;   r0x1003
+                                           ;; Starting pCode block
+                                           S_flamecanon__delay	code
+                                           _delay:
+                                           ; 2 exit points
+                                           ;	.line	50; "flamecanon.c"	void delay(uint16_t iterations)
+00011d   009d     movwf   0x1d             	MOVWF	r0x1000
+00011e   081b     movf    0x1b, 0x0        	MOVF	STK00,W
+00011f   009c     movwf   0x1c             	MOVWF	r0x1001
+                                           ;	.line	53; "flamecanon.c"	for (i = 0; i < iterations; i++) {
+000120   019e     clrf    0x1e             	CLRF	r0x1002
+000121   019f     clrf    0x1f             	CLRF	r0x1003
+                                           _00111_DS_:
+000122   081d     movf    0x1d, 0x0        	MOVF	r0x1000,W
+000123   021f     subwf   0x1f, 0x0        	SUBWF	r0x1003,W
+000124   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000125   2928     goto    0x0128           	GOTO	_00122_DS_
+000126   081c     movf    0x1c, 0x0        	MOVF	r0x1001,W
+000127   021e     subwf   0x1e, 0x0        	SUBWF	r0x1002,W
+                                           _00122_DS_:
+000128   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000129   292f     goto    0x012f           	GOTO	_00113_DS_
+                                           ;;genSkipc:3257: created from rifx:0x7ffe58cc6690
+00012a   0000     nop                      	nop	
+                                           ;	.line	53; "flamecanon.c"	for (i = 0; i < iterations; i++) {
+00012b   0a9e     incf    0x1e, 0x1        	INCF	r0x1002,F
+00012c   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+00012d   0a9f     incf    0x1f, 0x1        	INCF	r0x1003,F
+00012e   2922     goto    0x0122           	GOTO	_00111_DS_
+                                           _00113_DS_:
+00012f   0008     return                   	RETURN	
+                                           ; exit point of _delay
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           S_flamecanon__configure	code
+                                           _configure:
+                                           ; 2 exit points
+                                           ;	.line	36; "flamecanon.c"	FUEL_PORT = 0;
+00013d   1283     bcf     0x03, 0x5        	BANKSEL	_PORTAbits
+00013e   1185     bcf     0x05, 0x3        	BCF	_PORTAbits,3
+                                           ;	.line	37; "flamecanon.c"	IGNITION_PORT = 0;
+00013f   1186     bcf     0x06, 0x3        	BCF	_PORTBbits,3
+                                           ;	.line	38; "flamecanon.c"	LATCH_PORT = 0;
+000140   1086     bcf     0x06, 0x1        	BCF	_PORTBbits,1
+                                           ;	.line	39; "flamecanon.c"	DEBUG_PORT = 0;
+000141   1105     bcf     0x05, 0x2        	BCF	_PORTAbits,2
+                                           ;	.line	41; "flamecanon.c"	FUEL_TRIS = 0;
+000142   1683     bsf     0x03, 0x5        	BANKSEL	_TRISAbits
+000143   1185     bcf     0x05, 0x3        	BCF	_TRISAbits,3
+                                           ;	.line	42; "flamecanon.c"	IGNITION_TRIS = 0;
+000144   1186     bcf     0x06, 0x3        	BCF	_TRISBbits,3
+                                           ;	.line	43; "flamecanon.c"	LATCH_TRIS = 0;
+000145   1086     bcf     0x06, 0x1        	BCF	_TRISBbits,1
+                                           ;	.line	45; "flamecanon.c"	FLAME_TRIS = 1;
+000146   1485     bsf     0x05, 0x1        	BSF	_TRISAbits,1
+                                           ;	.line	46; "flamecanon.c"	STOP_TRIS= 1;
+000147   1406     bsf     0x06, 0x0        	BSF	_TRISBbits,0
+000148   0008     return                   	RETURN	
+                                           ; exit point of _configure
+                                           
+                                           
+                                           ;	code size estimation:
+                                           ;	  175+   83 =   258 instructions (  682 byte)
+                                           
+                                           	end
+                                                   LIST
+                                           
+                                           ;==========================================================================
+                                           ; Build date : Aug 07 2014
+                                           ;  MPASM PIC16F877 processor include
+                                           ; 
+                                           ;  (c) Copyright 1999-2014 Microchip Technology, All rights reserved
+                                           ;==========================================================================
+                                           
+                                                   NOLIST
+                                                   LIST
+                                           
+                                           ;==========================================================================
+                                           ; Build date : Aug 07 2014
+                                           ;  MPASM PIC16F84 processor include
+                                           ; 
+                                           ;  (c) Copyright 1999-2014 Microchip Technology, All rights reserved
+                                           ;==========================================================================
+                                           
+                                                   NOLIST
