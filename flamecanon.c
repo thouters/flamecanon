@@ -111,17 +111,9 @@ void delay_cooldown(void)
 {
     delay_s(120); // measured 120+14sec on chrono
 }
-void update_debug(void)
-{
-    return;
-    if (read_flame()) {
-        DEBUG_PORT = 1;
-    } else {
-        DEBUG_PORT = 0;
-    }
-}
 void main(void)
 {
+    uint8_t i;
     configure();
 
     delay_pressure();
@@ -142,7 +134,6 @@ void main(void)
                 break;
             }
         }
-        update_debug();
     } while (true);
 
     ignition_off();
@@ -151,7 +142,6 @@ void main(void)
 
     do 
     {
-        update_debug();
             DEBUG_PORT = 0;
         if(!read_flame()) 
         {
@@ -160,27 +150,37 @@ void main(void)
             {
                 fuel_off();
                 delay_relay();
+
+                delay_cooldown();
                 latch_off();
                 ignition_off(); // failsafe
-                while(1) { update_debug(); } ; 
+                while(1) { } ; 
             }
         }
         if (!read_inv_stopbutton()) 
         {
             DEBUG_PORT = 1;
-            //uint8_t i;
-            //for i=0; i < 200; i++
-            //delay_ms(1);
-            //if during 2ds no pulse received
+            delay_ds(5);
 
-            if (!read_inv_stopbutton()) 
+            // sample for 10 50Hz cycles (button dutycycles 50%)
+            // if button not pushed during that period,
+            // ignore and continue mainloop
+            for (i=0; i < 200; i++) 
+            {
+                if (!read_inv_stopbutton()) {
+                    // button still pushed
+                    break; 
+                }
+                delay_ms(1);
+            }
+            if (i < 200) // end of loop not reached
             {
                 DEBUG_PORT = 1;
                 fuel_off();
                 delay_cooldown();
                 latch_off();
                 ignition_off(); // failsafe
-                while(1) { update_debug(); };
+                while(1) {  };
             }
         }
     } while(true);
